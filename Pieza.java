@@ -1,3 +1,5 @@
+package ajedrez;
+
 import java.util.List;
 
 public abstract class Pieza {
@@ -23,16 +25,7 @@ public abstract class Pieza {
 
     public abstract String getUnicodeSymbol();
 
-    /**
-     * Devuelve una lista de movimientos válidos para esta pieza desde la posición dada.
-     * La validación no incluye verificar si el propio rey queda en jaque.
-     * @param fila Fila actual de la pieza.
-     * @param col Columna actual de la pieza.
-     * @param tablero El estado actual del tablero.
-     * @return Una lista de arrays de enteros, donde cada array es una coordenada [fila, col].
-     */
     public abstract List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero);
-
 
     @Override
     public String toString() {

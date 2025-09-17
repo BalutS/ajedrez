@@ -1,3 +1,5 @@
+package ajedrez;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +16,6 @@ public class Rey extends Pieza {
     @Override
     public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
         List<int[]> movimientos = new ArrayList<>();
-
-        // Movimientos normales de un paso
         int[][] reyMovimientos = {
             {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}
         };
@@ -29,10 +29,7 @@ public class Rey extends Pieza {
                 }
             }
         }
-
-        // Lógica de Enroque
         if (!haMovido && !tablero.estaEnJaque(this.color)) {
-            // Enroque corto (lado del rey)
             Pieza torreDerecha = tablero.getPieza(fila, 7);
             if (torreDerecha instanceof Torre && !torreDerecha.haMovido()) {
                 if (tablero.getPieza(fila, 5) == null && tablero.getPieza(fila, 6) == null) {
@@ -42,7 +39,6 @@ public class Rey extends Pieza {
                     }
                 }
             }
-            // Enroque largo (lado de la reina)
             Pieza torreIzquierda = tablero.getPieza(fila, 0);
             if (torreIzquierda instanceof Torre && !torreIzquierda.haMovido()) {
                 if (tablero.getPieza(fila, 1) == null && tablero.getPieza(fila, 2) == null && tablero.getPieza(fila, 3) == null) {

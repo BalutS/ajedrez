@@ -1,3 +1,5 @@
+package ajedrez;
+
 public class Tablero {
     private Pieza[][] tablero = new Pieza[8][8];
     private ColorPieza turnoActual;
@@ -26,11 +28,7 @@ public class Tablero {
 
     public void moverPieza(int fromFila, int fromCol, int toFila, int toCol) {
         Pieza pieza = getPieza(fromFila, fromCol);
-
-        // Resetear en passant
         ultimoMovimientoDoblePeon = null;
-
-        // Lógica de Enroque
         if (pieza instanceof Rey && Math.abs(fromCol - toCol) == 2) {
             tablero[toFila][toCol] = pieza;
             tablero[fromFila][fromCol] = null;
@@ -47,13 +45,11 @@ public class Tablero {
                 torre.setHaMovido(true);
             }
         } else if (pieza instanceof Peon && fromCol != toCol && getPieza(toFila, toCol) == null) {
-            // Lógica de Captura al Paso
             tablero[toFila][toCol] = pieza;
             tablero[fromFila][fromCol] = null;
-            tablero[fromFila][toCol] = null; // Capturar el peón
+            tablero[fromFila][toCol] = null;
             pieza.setHaMovido(true);
         } else {
-            // Movimiento normal
             if (pieza instanceof Peon && Math.abs(fromFila - toFila) == 2) {
                 ultimoMovimientoDoblePeon = new int[]{toFila, toCol};
             }
@@ -141,7 +137,6 @@ public class Tablero {
     }
 
     private void setupInicial() {
-        // Piezas Negras
         tablero[0][0] = new Torre(ColorPieza.NEGRO);
         tablero[0][1] = new Caballo(ColorPieza.NEGRO);
         tablero[0][2] = new Alfil(ColorPieza.NEGRO);
@@ -153,8 +148,6 @@ public class Tablero {
         for (int i = 0; i < 8; i++) {
             tablero[1][i] = new Peon(ColorPieza.NEGRO);
         }
-
-        // Piezas Blancas
         tablero[7][0] = new Torre(ColorPieza.BLANCO);
         tablero[7][1] = new Caballo(ColorPieza.BLANCO);
         tablero[7][2] = new Alfil(ColorPieza.BLANCO);
