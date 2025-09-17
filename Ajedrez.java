@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Ajedrez extends JFrame {
@@ -180,5 +181,439 @@ public class Ajedrez extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Ajedrez());
+    }
+}
+
+enum ColorPieza {
+    BLANCO,
+    NEGRO
+}
+
+abstract class Pieza {
+    protected ColorPieza color;
+    protected boolean haMovido;
+
+    public Pieza(ColorPieza color) {
+        this.color = color;
+        this.haMovido = false;
+    }
+
+    public boolean haMovido() {
+        return haMovido;
+    }
+
+    public void setHaMovido(boolean haMovido) {
+        this.haMovido = haMovido;
+    }
+
+    public ColorPieza getColor() {
+        return color;
+    }
+
+    public abstract String getUnicodeSymbol();
+
+    public abstract List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero);
+
+    @Override
+    public String toString() {
+        return getUnicodeSymbol();
+    }
+}
+
+class Torre extends Pieza {
+    public Torre(ColorPieza color) {
+        super(color);
+    }
+
+    @Override
+    public String getUnicodeSymbol() {
+        return (color == ColorPieza.BLANCO) ? "\u2656" : "\u265C";
+    }
+
+    @Override
+    public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
+        List<int[]> movimientos = new ArrayList<>();
+        int[][] direcciones = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        for (int[] d : direcciones) {
+            int nextFila = fila + d[0];
+            int nextCol = col + d[1];
+            while (nextFila >= 0 && nextFila < 8 && nextCol >= 0 && nextCol < 8) {
+                Pieza piezaEnCasilla = tablero.getPieza(nextFila, nextCol);
+                if (piezaEnCasilla == null) {
+                    movimientos.add(new int[]{nextFila, nextCol});
+                } else {
+                    if (piezaEnCasilla.getColor() != this.color) {
+                        movimientos.add(new int[]{nextFila, nextCol});
+                    }
+                    break;
+                }
+                nextFila += d[0];
+                nextCol += d[1];
+            }
+        }
+        return movimientos;
+    }
+}
+
+class Caballo extends Pieza {
+    public Caballo(ColorPieza color) {
+        super(color);
+    }
+
+    @Override
+    public String getUnicodeSymbol() {
+        return (color == ColorPieza.BLANCO) ? "\u2658" : "\u265E";
+    }
+
+    @Override
+    public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
+        List<int[]> movimientos = new ArrayList<>();
+        int[][] lMovimientos = {
+            {-2, -1}, {-2, 1}, {-1, -2}, {-1, 2},
+            {1, -2}, {1, 2}, {2, -1}, {2, 1}
+        };
+        for (int[] m : lMovimientos) {
+            int nextFila = fila + m[0];
+            int nextCol = col + m[1];
+            if (nextFila >= 0 && nextFila < 8 && nextCol >= 0 && nextCol < 8) {
+                Pieza piezaEnCasilla = tablero.getPieza(nextFila, nextCol);
+                if (piezaEnCasilla == null || piezaEnCasilla.getColor() != this.color) {
+                    movimientos.add(new int[]{nextFila, nextCol});
+                }
+            }
+        }
+        return movimientos;
+    }
+}
+
+class Alfil extends Pieza {
+    public Alfil(ColorPieza color) {
+        super(color);
+    }
+
+    @Override
+    public String getUnicodeSymbol() {
+        return (color == ColorPieza.BLANCO) ? "\u2657" : "\u265D";
+    }
+
+    @Override
+    public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
+        List<int[]> movimientos = new ArrayList<>();
+        int[][] direcciones = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+        for (int[] d : direcciones) {
+            int nextFila = fila + d[0];
+            int nextCol = col + d[1];
+            while (nextFila >= 0 && nextFila < 8 && nextCol >= 0 && nextCol < 8) {
+                Pieza piezaEnCasilla = tablero.getPieza(nextFila, nextCol);
+                if (piezaEnCasilla == null) {
+                    movimientos.add(new int[]{nextFila, nextCol});
+                } else {
+                    if (piezaEnCasilla.getColor() != this.color) {
+                        movimientos.add(new int[]{nextFila, nextCol});
+                    }
+                    break;
+                }
+                nextFila += d[0];
+                nextCol += d[1];
+            }
+        }
+        return movimientos;
+    }
+}
+
+class Reina extends Pieza {
+    public Reina(ColorPieza color) {
+        super(color);
+    }
+
+    @Override
+    public String getUnicodeSymbol() {
+        return (color == ColorPieza.BLANCO) ? "\u2655" : "\u265B";
+    }
+
+    @Override
+    public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
+        List<int[]> movimientos = new ArrayList<>();
+        int[][] direcciones = {
+            {-1, 0}, {1, 0}, {0, -1}, {0, 1},
+            {-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+        };
+        for (int[] d : direcciones) {
+            int nextFila = fila + d[0];
+            int nextCol = col + d[1];
+            while (nextFila >= 0 && nextFila < 8 && nextCol >= 0 && nextCol < 8) {
+                Pieza piezaEnCasilla = tablero.getPieza(nextFila, nextCol);
+                if (piezaEnCasilla == null) {
+                    movimientos.add(new int[]{nextFila, nextCol});
+                } else {
+                    if (piezaEnCasilla.getColor() != this.color) {
+                        movimientos.add(new int[]{nextFila, nextCol});
+                    }
+                    break;
+                }
+                nextFila += d[0];
+                nextCol += d[1];
+            }
+        }
+        return movimientos;
+    }
+}
+
+class Rey extends Pieza {
+    public Rey(ColorPieza color) {
+        super(color);
+    }
+
+    @Override
+    public String getUnicodeSymbol() {
+        return (color == ColorPieza.BLANCO) ? "\u2654" : "\u265A";
+    }
+
+    @Override
+    public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
+        List<int[]> movimientos = new ArrayList<>();
+        int[][] reyMovimientos = {
+            {-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}
+        };
+        for (int[] m : reyMovimientos) {
+            int nextFila = fila + m[0];
+            int nextCol = col + m[1];
+            if (nextFila >= 0 && nextFila < 8 && nextCol >= 0 && nextCol < 8) {
+                Pieza piezaEnCasilla = tablero.getPieza(nextFila, nextCol);
+                if (piezaEnCasilla == null || piezaEnCasilla.getColor() != this.color) {
+                    movimientos.add(new int[]{nextFila, nextCol});
+                }
+            }
+        }
+        if (!haMovido && !tablero.estaEnJaque(this.color)) {
+            Pieza torreDerecha = tablero.getPieza(fila, 7);
+            if (torreDerecha instanceof Torre && !torreDerecha.haMovido()) {
+                if (tablero.getPieza(fila, 5) == null && tablero.getPieza(fila, 6) == null) {
+                    if (!tablero.simularMovimientoYVerificarJaque(fila, col, fila, 5, this.color) &&
+                        !tablero.simularMovimientoYVerificarJaque(fila, col, fila, 6, this.color)) {
+                        movimientos.add(new int[]{fila, 6});
+                    }
+                }
+            }
+            Pieza torreIzquierda = tablero.getPieza(fila, 0);
+            if (torreIzquierda instanceof Torre && !torreIzquierda.haMovido()) {
+                if (tablero.getPieza(fila, 1) == null && tablero.getPieza(fila, 2) == null && tablero.getPieza(fila, 3) == null) {
+                    if (!tablero.simularMovimientoYVerificarJaque(fila, col, fila, 2, this.color) &&
+                        !tablero.simularMovimientoYVerificarJaque(fila, col, fila, 3, this.color)) {
+                        movimientos.add(new int[]{fila, 2});
+                    }
+                }
+            }
+        }
+        return movimientos;
+    }
+}
+
+class Peon extends Pieza {
+    public Peon(ColorPieza color) {
+        super(color);
+    }
+
+    @Override
+    public String getUnicodeSymbol() {
+        return (color == ColorPieza.BLANCO) ? "\u2659" : "\u265F";
+    }
+
+    @Override
+    public List<int[]> getMovimientosValidos(int fila, int col, Tablero tablero) {
+        List<int[]> movimientos = new ArrayList<>();
+        int direccion = (this.color == ColorPieza.BLANCO) ? -1 : 1;
+        int unaCasillaAdelante = fila + direccion;
+        if (unaCasillaAdelante >= 0 && unaCasillaAdelante < 8 && tablero.getPieza(unaCasillaAdelante, col) == null) {
+            movimientos.add(new int[]{unaCasillaAdelante, col});
+            boolean esPrimerMovimiento = (this.color == ColorPieza.BLANCO && fila == 6) || (this.color == ColorPieza.NEGRO && fila == 1);
+            int dosCasillasAdelante = fila + 2 * direccion;
+            if (esPrimerMovimiento && tablero.getPieza(dosCasillasAdelante, col) == null) {
+                movimientos.add(new int[]{dosCasillasAdelante, col});
+            }
+        }
+        int[] colsDeCaptura = {col - 1, col + 1};
+        for (int nextCol : colsDeCaptura) {
+            if (unaCasillaAdelante >= 0 && unaCasillaAdelante < 8 && nextCol >= 0 && nextCol < 8) {
+                Pieza piezaEnDiagonal = tablero.getPieza(unaCasillaAdelante, nextCol);
+                if (piezaEnDiagonal != null && piezaEnDiagonal.getColor() != this.color) {
+                    movimientos.add(new int[]{unaCasillaAdelante, nextCol});
+                }
+            }
+        }
+        int[] ultimoDoblePaso = tablero.getUltimoMovimientoDoblePeon();
+        if (ultimoDoblePaso != null) {
+            int peonFila = ultimoDoblePaso[0];
+            int peonCol = ultimoDoblePaso[1];
+            if (peonFila == fila && Math.abs(peonCol - col) == 1) {
+                boolean filaCorrecta = (this.color == ColorPieza.BLANCO && fila == 3) || (this.color == ColorPieza.NEGRO && fila == 4);
+                if (filaCorrecta) {
+                    movimientos.add(new int[]{fila + direccion, peonCol});
+                }
+            }
+        }
+        return movimientos;
+    }
+}
+
+class Tablero {
+    private Pieza[][] tablero = new Pieza[8][8];
+    private ColorPieza turnoActual;
+    private int[] ultimoMovimientoDoblePeon = null;
+
+    public Tablero() {
+        setupInicial();
+        this.turnoActual = ColorPieza.BLANCO;
+    }
+
+    public ColorPieza getTurnoActual() {
+        return turnoActual;
+    }
+
+    public void cambiarTurno() {
+        turnoActual = (turnoActual == ColorPieza.BLANCO) ? ColorPieza.NEGRO : ColorPieza.BLANCO;
+    }
+
+    public Pieza getPieza(int fila, int col) {
+        return tablero[fila][col];
+    }
+
+    public int[] getUltimoMovimientoDoblePeon() {
+        return ultimoMovimientoDoblePeon;
+    }
+
+    public void moverPieza(int fromFila, int fromCol, int toFila, int toCol) {
+        Pieza pieza = getPieza(fromFila, fromCol);
+        ultimoMovimientoDoblePeon = null;
+        if (pieza instanceof Rey && Math.abs(fromCol - toCol) == 2) {
+            tablero[toFila][toCol] = pieza;
+            tablero[fromFila][fromCol] = null;
+            pieza.setHaMovido(true);
+            if (toCol == 6) {
+                Pieza torre = getPieza(fromFila, 7);
+                tablero[fromFila][5] = torre;
+                tablero[fromFila][7] = null;
+                torre.setHaMovido(true);
+            } else {
+                Pieza torre = getPieza(fromFila, 0);
+                tablero[fromFila][3] = torre;
+                tablero[fromFila][0] = null;
+                torre.setHaMovido(true);
+            }
+        } else if (pieza instanceof Peon && fromCol != toCol && getPieza(toFila, toCol) == null) {
+            tablero[toFila][toCol] = pieza;
+            tablero[fromFila][fromCol] = null;
+            tablero[fromFila][toCol] = null;
+            pieza.setHaMovido(true);
+        } else {
+            if (pieza instanceof Peon && Math.abs(fromFila - toFila) == 2) {
+                ultimoMovimientoDoblePeon = new int[]{toFila, toCol};
+            }
+            tablero[toFila][toCol] = pieza;
+            tablero[fromFila][fromCol] = null;
+            if (pieza != null) {
+                pieza.setHaMovido(true);
+            }
+        }
+    }
+
+    private int[] encontrarRey(ColorPieza color) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Pieza p = getPieza(i, j);
+                if (p instanceof Rey && p.getColor() == color) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean estaEnJaque(ColorPieza colorRey) {
+        int[] posRey = encontrarRey(colorRey);
+        if (posRey == null) return false;
+        ColorPieza colorAtacante = (colorRey == ColorPieza.BLANCO) ? ColorPieza.NEGRO : ColorPieza.BLANCO;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Pieza p = getPieza(i, j);
+                if (p != null && p.getColor() == colorAtacante) {
+                    java.util.List<int[]> movimientos = p.getMovimientosValidos(i, j, this);
+                    for (int[] mov : movimientos) {
+                        if (mov[0] == posRey[0] && mov[1] == posRey[1]) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean simularMovimientoYVerificarJaque(int fromFila, int fromCol, int toFila, int toCol, ColorPieza colorRey) {
+        Pieza piezaMovida = getPieza(fromFila, fromCol);
+        Pieza piezaCapturada = getPieza(toFila, toCol);
+        tablero[toFila][toCol] = piezaMovida;
+        tablero[fromFila][fromCol] = null;
+        boolean reyEnJaque = estaEnJaque(colorRey);
+        tablero[fromFila][fromCol] = piezaMovida;
+        tablero[toFila][toCol] = piezaCapturada;
+        return reyEnJaque;
+    }
+
+    public boolean tieneMovimientosLegales(ColorPieza color) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Pieza p = getPieza(i, j);
+                if (p != null && p.getColor() == color) {
+                    java.util.List<int[]> movimientos = p.getMovimientosValidos(i, j, this);
+                    for (int[] mov : movimientos) {
+                        if (!simularMovimientoYVerificarJaque(i, j, mov[0], mov[1], color)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void promocionarPeon(int fila, int col, String tipoPieza) {
+        Pieza peon = getPieza(fila, col);
+        if (peon == null || !(peon instanceof Peon)) return;
+        ColorPieza color = peon.getColor();
+        Pieza nuevaPieza;
+        switch (tipoPieza.toLowerCase()) {
+            case "reina": nuevaPieza = new Reina(color); break;
+            case "torre": nuevaPieza = new Torre(color); break;
+            case "alfil": nuevaPieza = new Alfil(color); break;
+            case "caballo": nuevaPieza = new Caballo(color); break;
+            default: nuevaPieza = new Reina(color); break;
+        }
+        tablero[fila][col] = nuevaPieza;
+    }
+
+    private void setupInicial() {
+        tablero[0][0] = new Torre(ColorPieza.NEGRO);
+        tablero[0][1] = new Caballo(ColorPieza.NEGRO);
+        tablero[0][2] = new Alfil(ColorPieza.NEGRO);
+        tablero[0][3] = new Reina(ColorPieza.NEGRO);
+        tablero[0][4] = new Rey(ColorPieza.NEGRO);
+        tablero[0][5] = new Alfil(ColorPieza.NEGRO);
+        tablero[0][6] = new Caballo(ColorPieza.NEGRO);
+        tablero[0][7] = new Torre(ColorPieza.NEGRO);
+        for (int i = 0; i < 8; i++) {
+            tablero[1][i] = new Peon(ColorPieza.NEGRO);
+        }
+        tablero[7][0] = new Torre(ColorPieza.BLANCO);
+        tablero[7][1] = new Caballo(ColorPieza.BLANCO);
+        tablero[7][2] = new Alfil(ColorPieza.BLANCO);
+        tablero[7][3] = new Reina(ColorPieza.BLANCO);
+        tablero[7][4] = new Rey(ColorPieza.BLANCO);
+        tablero[7][5] = new Alfil(ColorPieza.BLANCO);
+        tablero[7][6] = new Caballo(ColorPieza.BLANCO);
+        tablero[7][7] = new Torre(ColorPieza.BLANCO);
+        for (int i = 0; i < 8; i++) {
+            tablero[6][i] = new Peon(ColorPieza.BLANCO);
+        }
     }
 }
